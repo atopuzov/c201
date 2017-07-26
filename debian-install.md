@@ -64,6 +64,8 @@ I: Validating libacl1 2.2.52-3+b1
 
 ## Run the 2'nd bootstrap stage
 
+The following commands need to be run on the device itself. Other options include running it on a compatible device (eg. raspberry pi) or trough qemu.
+
 ```
 $ chroot ./root/ /debootstrap/debootstrap --second-stage
 
@@ -122,6 +124,8 @@ If you run into issues with key signing or being unable to run certain commands 
 
 ## Install required packages
 
+Packages: `cgpt vboot-utils vboot-kernel-utils u-boot-tools`
+
 ```
 $ chroot ./root apt-get install -y cgpt vboot-utils vboot-kernel-utils
 
@@ -155,6 +159,37 @@ Setting up libyaml-0-2:armhf (0.1.7-2) ...
 Processing triggers for libc-bin (2.24-11+deb9u1) ...
 Setting up vboot-utils (0~R52-8350.B-2) ...
 ```
+
+I forgot to install `u-boot-tools`
+
+```
+$ chroot ./root apt-get install -y u-boot-tools
+
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+  device-tree-compiler
+The following NEW packages will be installed:
+  device-tree-compiler u-boot-tools
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Need to get 449 kB of archives.
+After this operation, 757 kB of additional disk space will be used.
+Get:1 http://cdn-fastly.deb.debian.org/debian stretch/main armhf u-boot-tools armhf 2016.11+dfsg1-4 [103 kB]
+Get:2 http://cdn-fastly.deb.debian.org/debian stretch/main armhf device-tree-compiler armhf 1.4.2-1 [346 kB]
+Fetched 449 kB in 1s (228 kB/s)
+E: Can not write log (Is /dev/pts mounted?) - posix_openpt (19: No such device)
+Selecting previously unselected package u-boot-tools.
+(Reading database ... 13688 files and directories currently installed.)
+Preparing to unpack .../u-boot-tools_2016.11+dfsg1-4_armhf.deb ...
+Unpacking u-boot-tools (2016.11+dfsg1-4) ...
+Selecting previously unselected package device-tree-compiler.
+Preparing to unpack .../device-tree-compiler_1.4.2-1_armhf.deb ...
+Unpacking device-tree-compiler (1.4.2-1) ...
+Setting up u-boot-tools (2016.11+dfsg1-4) ...
+Setting up device-tree-compiler (1.4.2-1) ...
+```
+
 
 ## Install kernel package
 
@@ -367,38 +402,9 @@ $ cat > ./root/kernel.its <<EOF
 EOF
 ```
 
-## Install the missing package
-
-```
-$ chroot ./root apt-get install -y u-boot-tools
-
-Reading package lists... Done
-Building dependency tree
-Reading state information... Done
-The following additional packages will be installed:
-  device-tree-compiler
-The following NEW packages will be installed:
-  device-tree-compiler u-boot-tools
-0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
-Need to get 449 kB of archives.
-After this operation, 757 kB of additional disk space will be used.
-Get:1 http://cdn-fastly.deb.debian.org/debian stretch/main armhf u-boot-tools armhf 2016.11+dfsg1-4 [103 kB]
-Get:2 http://cdn-fastly.deb.debian.org/debian stretch/main armhf device-tree-compiler armhf 1.4.2-1 [346 kB]
-Fetched 449 kB in 1s (228 kB/s)
-E: Can not write log (Is /dev/pts mounted?) - posix_openpt (19: No such device)
-Selecting previously unselected package u-boot-tools.
-(Reading database ... 13688 files and directories currently installed.)
-Preparing to unpack .../u-boot-tools_2016.11+dfsg1-4_armhf.deb ...
-Unpacking u-boot-tools (2016.11+dfsg1-4) ...
-Selecting previously unselected package device-tree-compiler.
-Preparing to unpack .../device-tree-compiler_1.4.2-1_armhf.deb ...
-Unpacking device-tree-compiler (1.4.2-1) ...
-Setting up u-boot-tools (2016.11+dfsg1-4) ...
-Setting up device-tree-compiler (1.4.2-1) ...
-```
 
 
-# Sign the kernel
+## Sign the kernel
 
 ```
 $ chroot ./root mkimage -f kernel.its kernel.itb
